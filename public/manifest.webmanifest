@@ -1,0 +1,15 @@
+{
+  "name": "Ledgr — private expense tracker",
+  "short_name": "Ledgr",
+  "description": "Track spending, budgets, splits, and recurring bills.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF9F5",
+  "theme_color": "#FAF9F5",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

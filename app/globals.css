@@ -1,0 +1,114 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode (toggled by the theme provider on <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Ledgr design tokens — ported verbatim from lib/ui/theme.dart
+ * (LedgrPalette light/dark + LedgrTokens accents). Warm paper canvas,
+ * terracotta accent, hairline borders, no shadows.
+ */
+:root {
+  --canvas: #faf9f5;
+  --canvas-alt: #f2f0e8;
+  --paper: #ffffff;
+  --paper-warm: #fbf9f2;
+  --stroke: #e5e1d6;
+  --ink: #1a1814;
+  --ink-muted: #5c5a55;
+  --ink-soft: #8e8b83;
+
+  --terracotta: #c15f3c;
+  --terracotta-deep: #a34d2e;
+  --orange-pale: #f7ede4;
+  --orange-soft: #f3e5da;
+
+  --positive: #2e9d6e;
+  --negative: #d9534f;
+  --warning: #e0a93b;
+}
+
+.dark {
+  --canvas: #1a1815;
+  --canvas-alt: #22201c;
+  --paper: #26231f;
+  --paper-warm: #2b2824;
+  --stroke: #36322c;
+  --ink: #efeae0;
+  --ink-muted: #a8a39a;
+  --ink-soft: #7a7568;
+
+  --orange-pale: #2c211b;
+  --orange-soft: #2c211b;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-canvas-alt: var(--canvas-alt);
+  --color-paper: var(--paper);
+  --color-paper-warm: var(--paper-warm);
+  --color-stroke: var(--stroke);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-soft: var(--ink-soft);
+
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-deep: var(--terracotta-deep);
+  --color-orange-pale: var(--orange-pale);
+  --color-orange-soft: var(--orange-soft);
+
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-card: 14px;
+  --radius-xl: 18px;
+  --radius-sheet: 20px;
+}
+
+@layer base {
+  * {
+    border-color: var(--stroke);
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Tabular figures for all amounts. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Thin, warm scrollbars that suit the paper aesthetic. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ink-soft) 45%, transparent);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
