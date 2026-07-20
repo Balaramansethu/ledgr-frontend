@@ -1,8 +1,9 @@
 'use client';
 
-import { Paperclip, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import type { CustomCategoryDto, ExpenseDto } from '@ledgr/shared';
 import { Icon } from '@/components/ui/icon';
+import { useImageViewer } from '@/components/ui/image-viewer';
 import { resolveCategory } from '@/lib/categories';
 import { useCurrency } from '@/lib/format';
 
@@ -23,6 +24,7 @@ export function ExpenseTile({
   onDelete: (expense: ExpenseDto) => void;
 }) {
   const { fmt } = useCurrency();
+  const { view } = useImageViewer();
   const visual = resolveCategory(expense.category, expense.customCategoryKey, custom);
 
   return (
@@ -39,10 +41,7 @@ export function ExpenseTile({
           <Icon name={visual.icon} size={20} />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="flex items-center gap-1.5">
-            <span className="truncate font-semibold text-ink">{expense.description}</span>
-            {expense.imageUrl ? <Paperclip size={13} className="shrink-0 text-ink-soft" /> : null}
-          </span>
+          <span className="block truncate font-semibold text-ink">{expense.description}</span>
           <span className="block text-xs text-ink-soft">
             {visual.name} · {timeLabel(expense.createdAt)}
           </span>
@@ -51,6 +50,18 @@ export function ExpenseTile({
           {fmt(expense.amount)}
         </span>
       </button>
+      {expense.imageUrl ? (
+        <button
+          type="button"
+          onClick={() => view(expense.imageUrl!, expense.description)}
+          aria-label="View receipt"
+          title="View receipt"
+          className="shrink-0 overflow-hidden rounded-sm border border-stroke transition-transform hover:scale-105"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={expense.imageUrl} alt="" className="h-9 w-9 object-cover" />
+        </button>
+      ) : null}
       <button
         type="button"
         onClick={() => onDelete(expense)}

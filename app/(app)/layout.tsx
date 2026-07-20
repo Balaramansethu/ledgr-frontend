@@ -4,6 +4,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { NavShell } from '@/components/nav/nav-shell';
 import { AddExpenseProvider } from '@/components/add-expense/add-expense-context';
+import { ImageViewerProvider } from '@/components/ui/image-viewer';
 import { PwaBoot } from '@/components/pwa/pwa-boot';
 import { FullScreenLoader } from '@/components/ui/spinner';
 import { useAuth } from '@/lib/auth';
@@ -31,9 +32,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   if (loading || !user || !user.onboarded) return <FullScreenLoader />;
 
   return (
-    <AddExpenseProvider>
-      <PwaBoot />
-      <NavShell>{children}</NavShell>
-    </AddExpenseProvider>
+    <ImageViewerProvider>
+      <AddExpenseProvider>
+        <PwaBoot />
+        <NavShell>{children}</NavShell>
+      </AddExpenseProvider>
+    </ImageViewerProvider>
   );
 }

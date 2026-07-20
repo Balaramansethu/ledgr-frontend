@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Camera, Loader2, X } from 'lucide-react';
+import { useImageViewer } from '@/components/ui/image-viewer';
 import { api, ApiError } from '@/lib/api';
 import { cn } from '@/lib/cn';
 
@@ -20,6 +21,7 @@ export function ReceiptField({
   className?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { view } = useImageViewer();
   const [localPreview, setLocalPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,9 +73,10 @@ export function ReceiptField({
         <div className="flex items-center gap-3 rounded-card border border-stroke bg-paper p-2">
           <button
             type="button"
-            onClick={() => !uploading && inputRef.current?.click()}
+            onClick={() => !uploading && preview && view(preview, 'Receipt')}
             className="relative h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-canvas-alt"
-            aria-label="Change receipt"
+            aria-label="View receipt"
+            title="View receipt"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={preview} alt="Receipt preview" className="h-full w-full object-cover" />
@@ -88,9 +91,18 @@ export function ReceiptField({
               {uploading ? 'Uploading…' : 'Receipt attached'}
             </div>
             <div className="truncate text-xs text-ink-soft">
-              {uploading ? 'Hang tight' : 'Tap the image to replace'}
+              {uploading ? 'Hang tight' : 'Tap image to view'}
             </div>
           </div>
+          {!uploading ? (
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="rounded-sm px-2 py-1 text-xs font-semibold text-terracotta transition-colors hover:bg-orange-pale"
+            >
+              Replace
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={remove}
