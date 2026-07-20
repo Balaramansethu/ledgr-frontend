@@ -1,18 +1,17 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Camera, Split as SplitIcon, X } from 'lucide-react';
-import { CATEGORIES } from '@ledgr/shared';
+import { useEffect, useState } from 'react';
+import { Split as SplitIcon, X } from 'lucide-react';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { SerifAmount } from '@/components/ui/primitives';
 import { Button } from '@/components/ui/button';
 import { CategoryChip, type CategorySelection } from '@/components/category/category-select';
+import { ReceiptField } from '@/components/expense/receipt-field';
 import { SplitDialog } from '@/components/split/split-dialog';
 import { Keypad, applyKey } from './keypad';
 import { useCreateExpense, useCategories } from '@/lib/queries';
 import { useCurrency } from '@/lib/format';
 import { resolveCategory } from '@/lib/categories';
-import { api, ApiError } from '@/lib/api';
 
 const DEFAULT_CATEGORY: CategorySelection = { category: 'other', customKey: null };
 
@@ -26,7 +25,6 @@ export function AddExpenseDialog({
   const { symbol } = useCurrency();
   const { data: custom = [] } = useCategories();
   const createExpense = useCreateExpense();
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const [input, setInput] = useState('');
   const [note, setNote] = useState('');
@@ -65,22 +63,6 @@ export function AddExpenseDialog({
     return () => window.removeEventListener('keydown', handler);
   }, [open]);
 
-  async function handleReceipt(file: File) {
-    setError(null);
-    const form = new FormData();
-    form.append('file', file);
-    try {
-      const { url } = await api.upload<{ url: string }>('/uploads/receipt', form);
-      setReceiptUrl(url);
-    } catch (err) {
-      setError(
-        err instanceof ApiError && err.status === 503
-          ? 'Receipt uploads are not configured on this server.'
-          : 'Could not upload the receipt.',
-      );
-    }
-  }
-
   async function handleSave() {
     if (!amount || amount <= 0) return;
     setBusy(true);
@@ -111,32 +93,16 @@ export function AddExpenseDialog({
 
           <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
             <CategoryChip value={selection} onChange={setSelection} />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="inline-flex items-center gap-2 rounded-full border border-stroke bg-paper px-3 py-1.5 text-sm font-semibold text-ink"
-            >
-              <Camera size={14} /> {receiptUrl ? 'Attached' : 'Receipt'}
-            </button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) void handleReceipt(file);
-                e.target.value = '';
-              }}
-            />
           </div>
 
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Add a note (optional)"
-            className="mb-4 h-11 w-full rounded-sm border border-stroke bg-paper px-4 text-sm outline-none focus:border-terracotta"
+            className="mb-3 h-11 w-full rounded-sm border border-stroke bg-paper px-4 text-sm outline-none focus:border-terracotta"
           />
+
+          <ReceiptField value={receiptUrl} onChange={setReceiptUrl} className="mb-4" />
 
           {error ? (
             <div className="mb-3 flex w-full items-center justify-between rounded-sm bg-negative/10 px-3 py-2 text-sm text-negative">

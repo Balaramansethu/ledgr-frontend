@@ -20,13 +20,13 @@ export function Header({ title, actions, onAdd }: { title: string; actions?: Rea
         <h1 className="hidden text-lg font-bold text-ink lg:block">{title}</h1>
         <div className="ml-auto flex items-center gap-2">
           {actions}
-          <button
+          {/* <button
             type="button"
             onClick={onAdd}
             className="hidden h-10 items-center gap-2 rounded-sm bg-terracotta px-4 text-sm font-semibold text-white transition-colors hover:bg-terracotta-deep lg:inline-flex"
           >
             <Plus size={16} /> Add expense
-          </button>
+          </button> */}
           <Link href="/settings" aria-label="Profile and settings" className="lg:hidden">
             <AvatarBubble name={user?.name || 'You'} size={36} />
           </Link>

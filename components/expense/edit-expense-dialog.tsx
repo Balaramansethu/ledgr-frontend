@@ -1,15 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Camera, Split as SplitIcon, X } from 'lucide-react';
+import { Split as SplitIcon } from 'lucide-react';
 import { formatAmount, formatAmountInput, parseAmount, type ExpenseDto } from '@ledgr/shared';
 import { ResponsiveDialog } from '@/components/ui/responsive-dialog';
 import { Button } from '@/components/ui/button';
 import { CategoryChip, type CategorySelection } from '@/components/category/category-select';
+import { ReceiptField } from '@/components/expense/receipt-field';
 import { SplitDialog } from '@/components/split/split-dialog';
 import { useUpdateExpense } from '@/lib/queries';
 import { useCurrency } from '@/lib/format';
-import { api } from '@/lib/api';
 
 /** Edit an existing expense — ports the home_screen edit sheet. */
 export function EditExpenseDialog({
@@ -42,17 +42,6 @@ export function EditExpenseDialog({
   }, [expense, open]);
 
   if (!expense) return null;
-
-  async function handleReceipt(file: File) {
-    const form = new FormData();
-    form.append('file', file);
-    try {
-      const { url } = await api.upload<{ url: string }>('/uploads/receipt', form);
-      setReceiptUrl(url);
-    } catch {
-      setError('Could not upload the receipt.');
-    }
-  }
 
   async function handleUpdate() {
     const parsed = parseAmount(amount);
@@ -103,30 +92,9 @@ export function EditExpenseDialog({
 
           <div className="flex flex-wrap items-center gap-2">
             <CategoryChip value={selection} onChange={setSelection} />
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-stroke bg-paper px-3 py-1.5 text-sm font-semibold text-ink">
-              <Camera size={14} /> {receiptUrl ? 'Attached' : 'Receipt'}
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) void handleReceipt(file);
-                  e.target.value = '';
-                }}
-              />
-            </label>
-            {receiptUrl ? (
-              <button
-                type="button"
-                onClick={() => setReceiptUrl(null)}
-                className="rounded-full p-1 text-ink-soft hover:text-negative"
-                aria-label="Remove receipt"
-              >
-                <X size={16} />
-              </button>
-            ) : null}
           </div>
+
+          <ReceiptField value={receiptUrl} onChange={setReceiptUrl} />
 
           {error ? <p className="text-sm text-negative">{error}</p> : null}
 

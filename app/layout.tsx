@@ -15,6 +15,10 @@ export const metadata: Metadata = {
   title: 'Ledgr — private expense tracker',
   description: 'Track spending, budgets, splits, and recurring bills. Your ledger, your data.',
   manifest: '/manifest.webmanifest',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png'
+  },
   appleWebApp: { capable: true, title: 'Ledgr', statusBarStyle: 'default' },
 };
 
