@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { UserDto } from '@ledgr/shared';
+import { useQueryClient } from '@tanstack/react-query';
 import { api, ApiError } from './api';
 
 interface AuthContextValue {
@@ -17,6 +18,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [user, setUserState] = useState<UserDto | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,9 +50,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await api.post('/auth/logout');
-    setUserState(null);
-  }, []);
+    try {
+      await api.post('/auth/logout');
+    } finally {
+      queryClient.clear();
+      setUserState(null);
+    }
+  }, [queryClient]);
 
   return (
     <AuthContext.Provider
