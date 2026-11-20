@@ -66,7 +66,7 @@ export function ExpenseTile({
         type="button"
         onClick={() => onDelete(expense)}
         aria-label={`Delete ${expense.description}`}
-        className="shrink-0 rounded-sm p-2 text-ink-soft opacity-0 transition-opacity hover:bg-canvas-alt hover:text-negative focus-visible:opacity-100 group-hover:opacity-100"
+        className="shrink-0 rounded-sm p-2 text-ink-soft transition-opacity hover:bg-canvas-alt hover:text-negative focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:hover)]:opacity-0"
       >
         <Trash2 size={16} />
       </button>
