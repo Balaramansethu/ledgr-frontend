@@ -12,7 +12,8 @@
     "build": "next build",
     "start": "next start -p 3000",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "(tsc --outDir .test-build --noEmit false --module commonjs --moduleResolution node10 --target ES2022 --jsx react-jsx --esModuleInterop --skipLibCheck --rootDir . && node -e \"require('fs').writeFileSync('.test-build/package.json', JSON.stringify({type: 'commonjs'}))\" && mkdir -p .test-build/node_modules && ln -s .. .test-build/node_modules/@ && cd .test-build && node --test); code=$?; rm -rf .test-build; exit $code"
   },
   "dependencies": {
     "@ledgr/shared": "file:./shared",

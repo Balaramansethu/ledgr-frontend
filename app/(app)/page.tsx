@@ -73,7 +73,7 @@ export default function HomePage() {
         <section className="flex flex-col gap-2">
           <SectionLabel>Recent activity</SectionLabel>
           <PaperCard className="p-2">
-            <ExpenseList expenses={expenses.slice(0, 12)} custom={custom} />
+            <ExpenseList expenses={expenses.slice(0, 12)} custom={custom} grouped />
           </PaperCard>
         </section>
       ) : null}
