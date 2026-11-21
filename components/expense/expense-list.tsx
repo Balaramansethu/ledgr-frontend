@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import type { CustomCategoryDto, ExpenseDto, SplitDto } from '@ledgr/shared';
+import type { CustomCategoryDto, ExpenseDto, ExpenseGroup, SplitDto } from '@ledgr/shared';
+import { groupExpensesByDay } from '@ledgr/shared';
 import { ExpenseTile } from './expense-tile';
 import { EditExpenseDialog } from './edit-expense-dialog';
 import { useCreateExpense, useDeleteExpense, useReplaceSplits } from '@/lib/queries';
@@ -13,9 +14,11 @@ import { api } from '@/lib/api';
 export function ExpenseList({
   expenses,
   custom,
+  grouped = false,
 }: {
   expenses: ExpenseDto[];
   custom: CustomCategoryDto[];
+  grouped?: boolean;
 }) {
   const [editing, setEditing] = useState<ExpenseDto | null>(null);
   const [editOpen, setEditOpen] = useState(false);
@@ -58,20 +61,42 @@ export function ExpenseList({
     });
   }
 
+  const groups: ExpenseGroup[] = grouped ? groupExpensesByDay(expenses, new Date()) : [];
+
   return (
     <div className="flex flex-col">
-      {expenses.map((expense) => (
-        <ExpenseTile
-          key={expense.id}
-          expense={expense}
-          custom={custom}
-          onEdit={(e) => {
-            setEditing(e);
-            setEditOpen(true);
-          }}
-          onDelete={handleDelete}
-        />
-      ))}
+      {grouped
+        ? groups.map((group) => (
+            <div key={group.label} className="flex flex-col">
+              <h3 className="text-sm font-semibold tracking-tight text-ink-muted">
+                {group.label}
+              </h3>
+              {group.items.map((expense) => (
+                <ExpenseTile
+                  key={expense.id}
+                  expense={expense}
+                  custom={custom}
+                  onEdit={(e) => {
+                    setEditing(e);
+                    setEditOpen(true);
+                  }}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          ))
+        : expenses.map((expense) => (
+            <ExpenseTile
+              key={expense.id}
+              expense={expense}
+              custom={custom}
+              onEdit={(e) => {
+                setEditing(e);
+                setEditOpen(true);
+              }}
+              onDelete={handleDelete}
+            />
+          ))}
       <EditExpenseDialog expense={editing} open={editOpen} onOpenChange={setEditOpen} />
     </div>
   );
